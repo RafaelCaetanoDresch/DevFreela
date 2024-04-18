@@ -1,0 +1,93 @@
+﻿using DevFreela.Application.Services.Implementations;
+using DevFreela.Application.Services.Interfaces;
+using DevFreela.core;
+using DevFreela.Infra.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+
+namespace DevFreela.Api.Extensions;
+
+public static class BuilderExtensions
+{
+    public static void AddConfiguration(this WebApplicationBuilder builder)
+    {
+        Configuration.Database.ConnectionString =
+            builder.Configuration.GetConnectionString("Default") ?? string.Empty;
+    }
+
+    public static void AddDatabaseConfiguration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddDbContext<DevFreelaDbContext>(
+            o => o.UseNpgsql(Configuration.Database.ConnectionString));
+    }
+
+    public static void AddServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IProjectService, ProjectService>();
+        builder.Services.AddScoped<ISkillService, SkillService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+    }
+
+    public static void AddMediator(this WebApplicationBuilder builder)
+    {
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            builder.Services.AddMediatR(
+            cfg => cfg.RegisterServicesFromAssemblies(assembly));
+        }
+    }
+
+    public static void AddSwaggerGen(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "DevFreela.API", Version = "v1" });
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorizationg header usando o esquema Bearer."
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
+        });
+    }
+
+    public static void AddJwtAuthentication(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+
+                      ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                      ValidAudience = builder.Configuration["Jwt:Audience"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                  };
+              });
+    }
+}
