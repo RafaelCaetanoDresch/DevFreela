@@ -1,7 +1,7 @@
-﻿using DevFreela.Application.Services.Implementations;
-using DevFreela.Application.Services.Interfaces;
-using DevFreela.core;
+﻿using DevFreela.core;
+using DevFreela.Core.Repository;
 using DevFreela.Infra.Persistence;
+using DevFreela.Infra.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,11 +24,15 @@ public static class BuilderExtensions
             o => o.UseNpgsql(Configuration.Database.ConnectionString));
     }
 
+    public static void AddRepositories(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+        builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+    }
+
     public static void AddServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IProjectService, ProjectService>();
-        builder.Services.AddScoped<ISkillService, SkillService>();
-        builder.Services.AddScoped<IUserService, UserService>();
     }
 
     public static void AddMediator(this WebApplicationBuilder builder)

@@ -1,21 +1,15 @@
 ﻿namespace DevFreela.Application.Queries.GetAllProjects;
 
-public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, List<ProjectViewModel>>
+public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, List<ProjectDto>>
 {
-    private readonly DevFreelaDbContext _context;
+    private readonly IProjectRepository _projectRepository;
 
-    public GetAllProjectsQueryHandler(DevFreelaDbContext context)
+    public GetAllProjectsQueryHandler(IProjectRepository projectRepository)
     {
-        _context = context;
+        _projectRepository = projectRepository;
     }
-    public Task<List<ProjectViewModel>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ProjectDto>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
     {
-        var projects = _context.Projects;
-
-        var projectsViewModel = projects
-            .Select(p => new ProjectViewModel(p.Id, p.Title, p.CreatedAt))
-            .ToListAsync();
-
-        return projectsViewModel;
+        return await _projectRepository.GetAllAsync();
     }
 }

@@ -13,6 +13,7 @@ builder.AddConfiguration();
 builder.AddDatabaseConfiguration();
 builder.AddMediator();
 builder.AddServices();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

@@ -14,8 +14,4 @@
     <ProjectReference Include="..\DevFreela.Infra\DevFreela.Infra.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Queries\GetAllSkills\" />
-  </ItemGroup>
-
 </Project>

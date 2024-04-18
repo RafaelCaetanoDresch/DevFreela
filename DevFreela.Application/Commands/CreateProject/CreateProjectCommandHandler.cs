@@ -2,11 +2,11 @@
 
 public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Guid>
 {
-    private readonly DevFreelaDbContext _context;
+    private readonly IProjectRepository _repository;
 
-    public CreateProjectCommandHandler(DevFreelaDbContext context)
+    public CreateProjectCommandHandler(IProjectRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
     public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
@@ -15,8 +15,8 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                                   request.ClientID,
                                   request.FreelancerID,
                                   request.TotalCost);
-        await _context.Projects.AddAsync(project);
-        await _context.SaveChangesAsync();
+        
+        await _repository.AddAsync(project);
 
         return project.Id;
     }
