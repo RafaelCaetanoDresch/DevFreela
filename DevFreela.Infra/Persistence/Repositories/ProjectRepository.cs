@@ -9,9 +9,9 @@ public class ProjectRepository : IProjectRepository
 
     public async Task<List<ProjectDto>> GetAllAsync()
     {
-        var projects = await _context.Projects.ToListAsync();
-
-        return projects.Select(p => new ProjectDto(p.Id, p.Title, p.CreatedAt)).ToList();
+        return await _context.Projects
+            .AsNoTracking()
+            .Select(p => new ProjectDto(p.Id, p.Title, p.CreatedAt)).ToListAsync();
     }
 
     public async Task<ProjectDetailDto> GetByIdAsync(Guid id)

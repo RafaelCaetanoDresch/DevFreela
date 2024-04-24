@@ -1,4 +1,5 @@
-﻿using DevFreela.core;
+﻿using DevFreela.Application.Validators;
+using DevFreela.core;
 using DevFreela.Core.Repository;
 using DevFreela.Infra.Persistence;
 using DevFreela.Infra.Persistence.Repositories;
@@ -7,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using FluentValidation.AspNetCore;
+using DevFreela.Api.Filters;
 
 namespace DevFreela.Api.Extensions;
 
@@ -42,6 +45,13 @@ public static class BuilderExtensions
             builder.Services.AddMediatR(
             cfg => cfg.RegisterServicesFromAssemblies(assembly));
         }
+    }
+
+    public static void AddControllers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddControllers(o => o.Filters.Add(typeof(ValidationFilter)))
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
+
     }
 
     public static void AddSwaggerGen(this WebApplicationBuilder builder)

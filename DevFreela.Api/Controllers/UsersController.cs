@@ -1,5 +1,6 @@
 ﻿using DevFreela.Api.Models;
 using DevFreela.Application.Commands.CreateUser;
+using DevFreela.Application.Queries.GetAllUsers;
 using DevFreela.Application.Queries.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,13 @@ public class UsersController : ControllerBase
     public UsersController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync(string queryParams)
+    {
+        var query = new GetAllUsersQuery(queryParams);
+        return Ok(await _mediator.Send(query));
     }
 
     //api/users/1

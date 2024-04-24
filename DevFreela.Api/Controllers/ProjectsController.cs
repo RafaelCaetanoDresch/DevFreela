@@ -3,10 +3,8 @@ using DevFreela.Application.Commands.CreateProject;
 using DevFreela.Application.Commands.DeleteProject;
 using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
-using DevFreela.Application.InputModels;
 using DevFreela.Application.Queries.GetAllProjects;
 using DevFreela.Application.Queries.GetProjectByID;
-using DevFreela.Application.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,9 +48,6 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateProjectCommand command)
     {
-        if(command.Title.Length > 50)
-            return BadRequest();
-
         var id = await _mediator.Send(command);
 
         return CreatedAtAction(nameof(GetById), new { id = id }, command);
