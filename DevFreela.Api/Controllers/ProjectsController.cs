@@ -9,7 +9,6 @@ using DevFreela.Application.Queries.GetProjectByID;
 namespace DevFreela.Api.Controllers;
 
 [Route("api/projects")]
-[Authorize]
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,6 +20,7 @@ public class ProjectsController : ControllerBase
 
     //api/projects?query=netcore
     [HttpGet]
+    [Authorize(Roles ="client, freelancer")]
     public async Task<IActionResult> Get(string queryParam)
     {
         var query = new GetAllProjectsQuery(queryParam);
@@ -32,6 +32,7 @@ public class ProjectsController : ControllerBase
 
     //api/projects/1
     [HttpGet("{id}")]// => Get a project By Project ID
+    [Authorize(Roles = "client, freelancer")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetProjectByIdCommand(id);
@@ -45,6 +46,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "client")]
     public async Task<IActionResult> Post([FromBody] CreateProjectCommand command)
     {
         var id = await _mediator.Send(command);
@@ -53,6 +55,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "client")]
     public async Task<IActionResult> Put(int id, [FromBody]UpdateProjectCommand command)
     {
         if (command.Description.Length > 200)
@@ -65,6 +68,7 @@ public class ProjectsController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "client")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var command = new DeleteProjectCommand(id);
@@ -76,6 +80,7 @@ public class ProjectsController : ControllerBase
 
     //api/projects/1/comments
     [HttpPost("{id}")]
+    [Authorize(Roles = "client, freelancer")]
     public async Task<IActionResult> PostComment([FromBody] CreateCommentCommand command)
     {
         await _mediator.Send(command);
@@ -85,6 +90,7 @@ public class ProjectsController : ControllerBase
 
     //api/projects/1/start
     [HttpPut("{id}/start")]
+    [Authorize(Roles = "client")]
     public async Task<IActionResult> Start(Guid id)
     {
         var command = new StartProjectCommand(id);
@@ -94,6 +100,7 @@ public class ProjectsController : ControllerBase
 
     //api/projects/1/finish
     [HttpPut("{id}/finish")]
+    [Authorize(Roles = "client")]
     public async Task<IActionResult> Finish(Guid id)
     {
         var command = new StartProjectCommand(id);
