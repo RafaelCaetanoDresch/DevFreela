@@ -29,4 +29,9 @@ public class UserRepository : IUserRepository
             .Select(u => new UserDto(u.Id, u.FullName, u.Email, u.Active))
             .ToListAsync();
     }
+
+    public async Task<User?> GetUserByEmailPasswordAsync(string email, string passwordHash)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == passwordHash);
+    }
 }

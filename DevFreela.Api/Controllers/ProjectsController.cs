@@ -5,12 +5,11 @@ using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
 using DevFreela.Application.Queries.GetAllProjects;
 using DevFreela.Application.Queries.GetProjectByID;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.Api.Controllers;
 
 [Route("api/projects")]
+[Authorize]
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;

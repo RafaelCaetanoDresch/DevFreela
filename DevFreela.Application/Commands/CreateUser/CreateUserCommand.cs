@@ -2,19 +2,19 @@
 {
     public class CreateUserCommand : IRequest<Guid>
     {
-        public CreateUserCommand(Guid id, string fullName, string password, string email, DateTime birthDate)
+        public CreateUserCommand(string fullName, string password, string email, DateTime birthDate, string role)
         {
-            Id = id;
             FullName = fullName;
             Password = password;
             Email = email;
             BirthDate = birthDate;
+            Role = role;
         }
 
-        public Guid Id { get; private set; }
         public string FullName { get; private set; }
         public string Password { get; private set; }
         public string Email { get; private set; }
         public DateTime BirthDate { get; private set; }
+        public string Role { get; private set; }
     }
 }

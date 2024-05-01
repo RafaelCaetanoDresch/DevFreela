@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using FluentValidation.AspNetCore;
 using DevFreela.Api.Filters;
+using DevFreela.Core.Services;
+using DevFreela.Infra.Services.AuthServices;
 
 namespace DevFreela.Api.Extensions;
 
@@ -36,6 +38,7 @@ public static class BuilderExtensions
 
     public static void AddServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IAuthServices, AuthService>();
     }
 
     public static void AddMediator(this WebApplicationBuilder builder)

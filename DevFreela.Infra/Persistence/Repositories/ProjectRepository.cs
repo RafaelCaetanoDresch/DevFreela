@@ -14,7 +14,7 @@ public class ProjectRepository : IProjectRepository
             .Select(p => new ProjectDto(p.Id, p.Title, p.CreatedAt)).ToListAsync();
     }
 
-    public async Task<ProjectDetailDto> GetByIdAsync(Guid id)
+    public async Task<Project> GetByIdAsync(Guid id)
     {
         var project = await _context.Projects
             .Include(p => p.Client)
@@ -23,14 +23,7 @@ public class ProjectRepository : IProjectRepository
 
         if (project is null) return null;
 
-        return new ProjectDetailDto(project.Id, 
-                                    project.Title, 
-                                    project.Description, 
-                                    project.TotalCost, 
-                                    project.StartedAt, 
-                                    project.FinishedAt, 
-                                    project.Client.FullName, 
-                                    project.Freelancer.FullName);
+        return project;
     }
 
     public async Task AddAsync(Project project)
